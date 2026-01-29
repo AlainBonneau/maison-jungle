@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import type { CartItem } from "../types/cart";
 
 export const useCart = () => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   // Charger le panier depuis localStorage au montage
   useEffect(() => {
@@ -21,14 +22,16 @@ export const useCart = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (plant) => {
+  const addToCart = (plant: CartItem) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.name === plant.name);
 
       if (existingItem) {
         // Augmenter la quantité si l'article existe déjà
         return prevCart.map((item) =>
-          item.name === plant.name ? { ...item, amount: item.amount + 1 } : item
+          item.name === plant.name
+            ? { ...item, amount: item.amount + 1 }
+            : item,
         );
       } else {
         // Ajouter un nouvel article
@@ -37,11 +40,11 @@ export const useCart = () => {
     });
   };
 
-  const removeFromCart = (plantName) => {
+  const removeFromCart = (plantName: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.name !== plantName));
   };
 
-  const updateQuantity = (plantName, newAmount) => {
+  const updateQuantity = (plantName: string, newAmount: number) => {
     if (newAmount <= 0) {
       removeFromCart(plantName);
       return;
@@ -49,8 +52,8 @@ export const useCart = () => {
 
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.name === plantName ? { ...item, amount: newAmount } : item
-      )
+        item.name === plantName ? { ...item, amount: newAmount } : item,
+      ),
     );
   };
 
@@ -66,7 +69,7 @@ export const useCart = () => {
     return cart.reduce((count, item) => count + item.amount, 0);
   };
 
-  const getCartItem = (plantName) => {
+  const getCartItem = (plantName: string) => {
     return cart.find((item) => item.name === plantName);
   };
 
