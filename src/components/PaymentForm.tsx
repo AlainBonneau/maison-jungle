@@ -1,58 +1,72 @@
-import { usePayment } from '../hooks/usePayment'
-import { usePaymentForm } from '../hooks/usePaymentForm'
-import '../styles/PaymentForm.css'
+import { usePayment } from "../hooks/usePayment";
+import { usePaymentForm } from "../hooks/usePaymentForm";
+import type { PaymentSuccess, PaymentData } from "../types/payment";
+import type { PaymentFieldName } from "../hooks/usePaymentForm";
+import "../styles/PaymentForm.css";
 
-function PaymentForm({ amount, onSuccess, onCancel }) {
-  const { isProcessing, error, processPayment } = usePayment()
-  const { 
-    formData, 
-    errors, 
-    updateField, 
-    validateForm, 
-    formatCardNumber, 
+function PaymentForm({
+  amount,
+  onSuccess,
+  onCancel,
+}: {
+  amount: number;
+  onSuccess: (result: PaymentSuccess) => void;
+  onCancel: () => void;
+}) {
+  const { isProcessing, error, processPayment } = usePayment();
+  const {
+    formData,
+    errors,
+    updateField,
+    validateForm,
+    formatCardNumber,
     formatExpiryDate,
-    resetForm 
-  } = usePaymentForm()
+    // resetForm,
+  } = usePaymentForm();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    updateField(name, value)
-  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    updateField(name as PaymentFieldName, value);
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     // Validation du formulaire
     if (!validateForm()) {
-      return
+      return;
     }
 
     try {
       // Appel au service de paiement
-      const paymentData = {
-        amount: amount,
-        cardNumber: formData.cardNumber.replace(/\s/g, ''),
-        expiryDate: formData.expiryDate,
-        cvv: formData.cvv,
-        cardholderName: formData.cardholderName
-      }
+      const paymentData: PaymentData = {
+        amount,
+        paymentMethod: {
+          cardNumber: formData.cardNumber.replace(/\s/g, ""),
+          expiryDate: formData.expiryDate,
+          cvv: formData.cvv,
+          cardholderName: formData.cardholderName,
+        },
+      };
 
-      const result = await processPayment(paymentData)
-      onSuccess(result)
+      const result = await processPayment(paymentData);
+      onSuccess(result);
     } catch (err) {
       // L'erreur est déjà gérée par le hook usePayment
-      console.error('Erreur de paiement:', err)
+      console.error("Erreur de paiement:", err);
     }
-  }
+  };
 
   return (
     <div className="payment-form-overlay">
       <div className="payment-form">
         <div className="payment-form-header">
           <h2>Paiement sécurisé</h2>
-          <button onClick={onCancel} className="close-btn">×</button>
+          <button onClick={onCancel} className="close-btn">
+            ×
+          </button>
         </div>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="cardNumber">Numéro de carte</label>
@@ -61,9 +75,11 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
               id="cardNumber"
               name="cardNumber"
               value={formData.cardNumber}
-              onChange={(e) => updateField('cardNumber', formatCardNumber(e.target.value))}
+              onChange={(e) =>
+                updateField("cardNumber", formatCardNumber(e.target.value))
+              }
               placeholder="1234 5678 9012 3456"
-              maxLength="19"
+              maxLength={19}
               required
             />
             {errors.cardNumber && (
@@ -79,9 +95,11 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
                 id="expiryDate"
                 name="expiryDate"
                 value={formData.expiryDate}
-                onChange={(e) => updateField('expiryDate', formatExpiryDate(e.target.value))}
+                onChange={(e) =>
+                  updateField("expiryDate", formatExpiryDate(e.target.value))
+                }
                 placeholder="MM/AA"
-                maxLength="5"
+                maxLength={5}
                 required
               />
               {errors.expiryDate && (
@@ -98,12 +116,10 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
                 value={formData.cvv}
                 onChange={handleInputChange}
                 placeholder="123"
-                maxLength="4"
+                maxLength={4}
                 required
               />
-              {errors.cvv && (
-                <span className="field-error">{errors.cvv}</span>
-              )}
+              {errors.cvv && <span className="field-error">{errors.cvv}</span>}
             </div>
           </div>
 
@@ -123,11 +139,7 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
             )}
           </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message">{error.message}</div>}
 
           <div className="payment-summary">
             <div className="amount-display">
@@ -137,26 +149,22 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
           </div>
 
           <div className="form-actions">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={onCancel}
               className="cancel-btn"
               disabled={isProcessing}
             >
               Annuler
             </button>
-            <button 
-              type="submit" 
-              className="pay-btn"
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Traitement...' : `Payer ${amount}€`}
+            <button type="submit" className="pay-btn" disabled={isProcessing}>
+              {isProcessing ? "Traitement..." : `Payer ${amount}€`}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default PaymentForm 
+export default PaymentForm;
