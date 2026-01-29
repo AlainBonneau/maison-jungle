@@ -1,11 +1,10 @@
 export type CartItem = {
-    id: string;
-    name: string;
-    description: string;
-    category: string;
-    price: number;
-    light: number;
-    water: number;
-    cover: string;
-    amount: number;
+  name: string;
+  category: Category;
+  id: string;
+  light: 1 | 2 | 3;
+  water: 1 | 2 | 3;
+  cover: string;
+  price: number;
+  description: string;
 };
