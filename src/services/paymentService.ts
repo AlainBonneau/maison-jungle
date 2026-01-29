@@ -1,7 +1,11 @@
-import type { PaymentData, PaymentMethod } from "../types/payment";
+import type {
+  PaymentData,
+  PaymentMethod,
+  PaymentSuccess,
+} from "../types/payment";
 
 export class PaymentService {
-  static async processPayment(paymentData: PaymentData) {
+  static async processPayment(paymentData: PaymentData): Promise<PaymentSuccess> {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Simulation d'un paiement réussi ou refusé

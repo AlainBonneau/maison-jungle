@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { CartItem } from "../types/cart";
+import type { Plant } from "../types/plant";
 
 export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -22,7 +23,7 @@ export const useCart = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (plant: CartItem) => {
+  const addToCart = (plant: Plant) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.name === plant.name);
 
