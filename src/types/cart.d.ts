@@ -7,4 +7,5 @@ export type CartItem = {
   cover: string;
   price: number;
   description: string;
+  amount: number;
 };
