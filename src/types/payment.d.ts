@@ -4,6 +4,13 @@ export type PaymentMethod = {
   cvv: string;
 };
 
+export type PaymentFormData = {
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardholderName: string;
+};
+
 export type PaymentData = {
   amount: number;
   currency?: "EUR" | "USD";
