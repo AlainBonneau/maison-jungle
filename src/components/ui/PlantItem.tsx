@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import type { CartItem } from "../../types/cart";
 import "../../styles/PlantItem.css";
+import type { Plant } from "../../types/plant";
+
+type PlantItemProps = Pick<Plant, "id" | "cover" | "name" | "water" | "light" | "price"> & {
+  onAddToCart: () => void;
+};
 
 function PlantItem({
   cover,
@@ -9,7 +13,7 @@ function PlantItem({
   price,
   id,
   onAddToCart,
-}: CartItem & { onAddToCart: () => void }) {
+}: PlantItemProps) {
   const [showAnimation, setShowAnimation] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
